@@ -18,82 +18,6 @@
       >
     </p>
 
-    <h2>How It Works</h2>
-
-    <p>
-      The first thing I did was create a global variable to prevent polluting
-      the window object.
-    </p>
-
-    <code>
-      <header>vanilla-hooks.js</header>
-      <pre>
-window.VanillaHooks = {};
-      </pre>
-    </code>
-
-    <p>
-      Next, I added some properties and methods to manage states and effects.
-    </p>
-
-    <code>
-      <header>vanilla-hooks.js</header>
-      <pre>
-window.VanillaHooks = {
-  states: [],
-  State: class {},
-  useState: () => {},
-  useEffect: () => {},
-};
-      </pre>
-    </code>
-
-    <p>
-      The constructor on the State class initializes the value and pushes an
-      event listener to the states array.
-    </p>
-
-    <code>
-      <header>vanilla-hooks.js</header>
-      <pre>
-constructor(intialValue) {
-  this.value = intialValue;
-  const { length: index } = window.VanillaHooks.states;
-  this.id = `vanilla-state-${index}`;
-  window.VanillaHooks.states.push(new Event(this.id));
-  this.event = window.VanillaHooks.states[index];
-}
-      </pre>
-    </code>
-
-    <p>
-      Within useState, I have a setState function that dispatches the event when
-      the state changes.
-    </p>
-    <code>
-      <header>vanilla-hooks.js</header>
-      <pre>
-const setState = (parameter) => {
-  const isFunction = typeof parameter === "function";
-  const value = isFunction ? parameter(state.value) : parameter;
-  state.set(value);
-  dispatchEvent(state.event);
-};
-      </pre>
-    </code>
-
-    <p>
-      Finally, the useEffect method adds an event listener using the callback
-      for all the dependencies.
-    </p>
-
-    <code>
-      <header>vanilla-hooks.js</header>
-      <pre>
-dependencies.forEach((state) => addEventListener(state.id, callback));
-      </pre>
-    </code>
-
     <h2>Practical Examples</h2>
 
     <p>Here are some practical examples of using Vanilla Hooks:</p>
@@ -233,6 +157,82 @@ useEffect(() => {
 }, [items]);
     </pre
       >
+    </code>
+
+    <h2>How It Works</h2>
+
+    <p>
+      The first thing I did was create a global variable to prevent polluting
+      the window object.
+    </p>
+
+    <code>
+      <header>vanilla-hooks.js</header>
+      <pre>
+window.VanillaHooks = {};
+      </pre>
+    </code>
+
+    <p>
+      Next, I added some properties and methods to manage states and effects.
+    </p>
+
+    <code>
+      <header>vanilla-hooks.js</header>
+      <pre>
+window.VanillaHooks = {
+  states: [],
+  State: class {},
+  useState: () => {},
+  useEffect: () => {},
+};
+      </pre>
+    </code>
+
+    <p>
+      The constructor on the State class initializes the value and pushes an
+      event listener to the states array.
+    </p>
+
+    <code>
+      <header>vanilla-hooks.js</header>
+      <pre>
+constructor(intialValue) {
+  this.value = intialValue;
+  const { length: index } = window.VanillaHooks.states;
+  this.id = `vanilla-state-${index}`;
+  window.VanillaHooks.states.push(new Event(this.id));
+  this.event = window.VanillaHooks.states[index];
+}
+      </pre>
+    </code>
+
+    <p>
+      Within useState, I have a setState function that dispatches the event when
+      the state changes.
+    </p>
+    <code>
+      <header>vanilla-hooks.js</header>
+      <pre>
+const setState = (parameter) => {
+  const isFunction = typeof parameter === "function";
+  const value = isFunction ? parameter(state.value) : parameter;
+  state.set(value);
+  dispatchEvent(state.event);
+};
+      </pre>
+    </code>
+
+    <p>
+      Finally, the useEffect method adds an event listener using the callback
+      for all the dependencies.
+    </p>
+
+    <code>
+      <header>vanilla-hooks.js</header>
+      <pre>
+dependencies.forEach((state) => addEventListener(state.id, callback));
+      </pre>
     </code>
 
     <footer>
