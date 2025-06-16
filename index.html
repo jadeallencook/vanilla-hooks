@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vanilla Hooks</title>
+    <script src="./vanilla-hooks.js"></script>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <h1>Vanilla Hooks</h1>
+
+    <p>
+      A tiny library (less than 50 lines of code) that brings React-like hooks
+      to vanilla JavaScript. <br /><br />
+      <a href="https://github.com/jadeallencook/vanilla-hooks"
+        >View source code on GitHub</a
+      >
+    </p>
+
+    <h2>How It Works</h2>
+
+    <p>
+      The first thing I did was create a global variable to prevent polluting
+      the window object.
+    </p>
+
+    <code>
+      <header>vanilla-hooks.js</header>
+      <pre>
+window.VanillaHooks = {};
+      </pre>
+    </code>
+
+    <p>
+      Next, I added some properties and methods to manage states and effects.
+    </p>
+
+    <code>
+      <header>vanilla-hooks.js</header>
+      <pre>
+window.VanillaHooks = {
+  states: [],
+  State: class {},
+  useState: () => {},
+  useEffect: () => {},
+};
+      </pre>
+    </code>
+
+    <p>
+      The constructor on the State class initializes the value and pushes an
+      event listener to the states array.
+    </p>
+
+    <code>
+      <header>vanilla-hooks.js</header>
+      <pre>
+constructor(intialValue) {
+  this.value = intialValue;
+  const { length: index } = window.VanillaHooks.states;
+  this.id = `vanilla-state-${index}`;
+  window.VanillaHooks.states.push(new Event(this.id));
+  this.event = window.VanillaHooks.states[index];
+}
+      </pre>
+    </code>
+
+    <p>
+      Within useState, I have a setState function that dispatches the event when
+      the state changes.
+    </p>
+    <code>
+      <header>vanilla-hooks.js</header>
+      <pre>
+const setState = (parameter) => {
+  const isFunction = typeof parameter === "function";
+  const value = isFunction ? parameter(state.value) : parameter;
+  state.set(value);
+  dispatchEvent(state.event);
+};
+      </pre>
+    </code>
+
+    <p>
+      Finally, the useEffect method adds an event listener using the callback
+      for all the dependencies.
+    </p>
+
+    <code>
+      <header>vanilla-hooks.js</header>
+      <pre>
+dependencies.forEach((state) => addEventListener(state.id, callback));
+      </pre>
+    </code>
+
+    <h2>Practical Examples</h2>
+
+    <p>Here are some practical examples of using Vanilla Hooks:</p>
+
+    <h3>Decrement & Increment</h3>
+
+    <p>This example allows users to increment and decrement a counter.</p>
+
+    <button onclick="handleDecrement()">Decrement</button>
+    <span id="count"></span>
+    <button onclick="handleIncrement()">Increment</button>
+
+    <code>
+      <header>index.html</header>
+      <pre>
+&lt;button onclick="handleDecrement()"&gt;Decrement&lt;/button&gt;
+&lt;span id="count"&gt;&lt;/span&gt;
+&lt;button onclick="handleIncrement()"&gt;Increment&lt;/button&gt;
+      </pre>
+    </code>
+
+    <code>
+      <header>app.js</header>
+      <pre>
+const { useEffect, useState } = VanillaHooks;
+
+const countElement = document.getElementById("count");
+
+const [count, setCount] = useState(1);
+
+const handleIncrement = () => setCount((previousState) => ++previousState);
+const handleDecrement = () => setCount((previousState) => --previousState);
+
+useEffect(() => {
+  countElement.innerText = count;
+}, [count]);
+    </pre
+      >
+    </code>
+
+    <h3>Input Binding</h3>
+
+    <p>
+      This example binds an input field to a state variable and displays the
+      value in real-time.
+    </p>
+
+    <p>
+      <span><strong>Name: </strong></span>
+      <span id="user-text"></span>
+    </p>
+    <input type="text" id="user-input" onkeyup="handleUserChange(event)" />
+
+    <code>
+      <header>index.html</header>
+      <pre>
+&lt;p&gt;
+  &lt;span&gt;&lt;strong&gt;Name: &lt;/strong&gt;&lt;/span&gt;
+  &lt;span id="user-text"&gt;&lt;/span&gt;
+&lt;/p&gt;
+&lt;input type="text" id="user-input" onkeyup="handleUserChange(event)" /&gt;
+      </pre>
+    </code>
+
+    <code>
+      <header>app.js</header>
+      <pre>
+const { useEffect, useState } = VanillaHooks;
+
+const userTextElement = document.getElementById("user-text");
+const userInputElement = document.getElementById("user-input");
+
+const [user, setUser] = useState("Jane Doe");
+
+const handleUserChange = (event) => setUser(event.target.value);
+
+useEffect(() => {
+  userTextElement.innerText = user;
+  userInputElement.value = user;
+}, [user]);
+    </pre
+      >
+    </code>
+
+    <h3>Todo List</h3>
+
+    <p>
+      This example manages a list of items and allows a user to add/remove
+      tasks.
+    </p>
+
+    <ul id="todo-list"></ul>
+    <input type="text" id="todo-input" />
+    <button id="add-todo-button">Add Todo</button>
+
+    <code>
+      <header>index.html</header>
+      <pre>
+&lt;ul id="todo-list"&gt;&lt;/ul&gt;
+&lt;input type="text" id="todo-input" /&gt;
+&lt;button id="add-todo-button"&gt;Add Todo&lt;/button&gt;
+      </pre>
+    </code>
+
+    <code>
+      <header>app.js</header>
+      <pre>
+const { useEffect, useState } = VanillaHooks;
+
+const todoListElement = document.getElementById("todo-list");
+const todoInputElement = document.getElementById("todo-input");
+const addTodoButtonElement = document.getElementById("add-todo-button");
+
+const [items, setItems] = useState(["Write more JavaScript"]);
+
+addTodoButtonElement.addEventListener("click", () =>
+  setItems((previousState) => [...previousState, todoInputElement.value])
+);
+
+useEffect(() => {
+  todoListElement.innerHTML = "";
+  todoInputElement.value = "";
+  items.map((item, index) => {
+    const todoItem = document.createElement("li");
+    const removeItemButtonElement = document.createElement("button");
+    removeItemButtonElement.innerText = "Remove";
+    removeItemButtonElement.addEventListener("click", () => {
+      setItems((previousState) => {
+        previousState.splice(index, 1);
+        return previousState;
+      });
+    });
+    todoItem.innerText = item;
+    todoItem.appendChild(removeItemButtonElement);
+    todoListElement.appendChild(todoItem);
+  });
+}, [items]);
+    </pre
+      >
+    </code>
+
+    <footer>
+      <p>
+        Created in the woods without internet by
+        <a href="https://github.com/jadeallencook">@jadeallencook</a>
+      </p>
+    </footer>
+
+    <script src="./app.js"></script>
+    <script src="./increment-decrement.js"></script>
+    <script src="./input-binding.js"></script>
+    <script src="./todo-list.js"></script>
+  </body>
+</html>
