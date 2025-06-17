@@ -159,6 +159,44 @@ useEffect(() => {
       >
     </code>
 
+    <h3>Fetch API</h3>
+    <p>
+      This example fetches data from an API and displays it in a list format.
+    </p>
+    <ul id="comments"></ul>
+
+    <code>
+      <header>index.html</header>
+      <pre>
+&lt;ul id="comments"&gt;&lt;/ul&gt;
+      </pre>
+    </code>
+
+    <code>
+      <header>app.js</header>
+      <pre>
+const { useEffect, useState } = VanillaHooks;
+
+const [comments, setComments] = useState([]);
+
+useEffect(async () => {
+  const response = await fetch(endpoint);
+  const data = await response.json();
+  setComments(data);
+}, []);
+
+useEffect(() => {
+  const commentsListElement = document.getElementById("comments");
+  commentsListElement.innerHTML = "";
+  comments.forEach((comment) => {
+    const listItem = document.createElement("li");
+    listItem.innerText = comment.body;
+    commentsListElement.appendChild(listItem);
+  });
+}, [comments]);
+      </pre>
+    </code>
+
     <h2>How It Works</h2>
 
     <p>
@@ -246,5 +284,6 @@ dependencies.forEach((state) => addEventListener(state.id, callback));
     <script src="./increment-decrement.js"></script>
     <script src="./input-binding.js"></script>
     <script src="./todo-list.js"></script>
+    <script src="./fetch-api.js"></script>
   </body>
 </html>

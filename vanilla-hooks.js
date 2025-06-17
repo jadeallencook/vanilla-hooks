@@ -11,6 +11,12 @@ window.VanillaHooks = {
     set(value) {
       this.value = value;
     }
+    forEach(callback) {
+      this.value.forEach(callback);
+    }
+    length() {
+      return this.value.length;
+    }
     toString() {
       return String(this.value);
     }
